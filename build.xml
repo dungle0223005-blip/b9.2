@@ -1,49 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ch09_ex2_cart" default="dist-war" basedir=".">
-    <description>
-        Custom build file for ch09_ex2_cart web application.
-    </description>
+<project name="ch09_ex2_cart" default="dist" basedir=".">
+    <description>Builds project ch09_ex2_cart into WAR for Tomcat</description>
 
-    <!-- Định nghĩa thư mục -->
-    <property name="src.dir" value="src"/>
-    <property name="web.dir" value="web"/>
-    <property name="build.dir" value="build"/>
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="web.build.dir" value="${build.dir}/web"/>
-    <property name="dist.dir" value="dist"/>
-    <property name="war.file" value="${dist.dir}/${ant.project.name}.war"/>
+    <!-- classpath: lấy servlet-api.jar từ Tomcat -->
+    <path id="compile.classpath">
+        <fileset dir="/usr/local/tomcat/lib">
+            <include name="servlet-api.jar"/>
+        </fileset>
+    </path>
 
-    <!-- Làm sạch build -->
+    <!-- target clean -->
     <target name="clean">
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}"/>
+        <delete dir="build"/>
+        <delete dir="dist"/>
     </target>
 
-    <!-- Biên dịch Java -->
+    <!-- target compile -->
     <target name="compile">
-        <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false"/>
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src/java"
+               destdir="build/classes"
+               includeantruntime="false"
+               classpathref="compile.classpath"/>
     </target>
 
-    <!-- Copy web resources (JSP, HTML, WEB-INF, …) -->
-    <target name="prepare-web">
-        <mkdir dir="${web.build.dir}"/>
-        <copy todir="${web.build.dir}">
-            <fileset dir="${web.dir}"/>
-        </copy>
-        <!-- Copy class vào WEB-INF/classes -->
-        <mkdir dir="${web.build.dir}/WEB-INF/classes"/>
-        <copy todir="${web.build.dir}/WEB-INF/classes">
-            <fileset dir="${classes.dir}"/>
-        </copy>
-    </target>
-
-    <!-- Đóng gói WAR -->
-    <target name="dist-war" depends="compile, prepare-web">
-        <mkdir dir="${dist.dir}"/>
-        <war destfile="${war.file}" webxml="${web.dir}/WEB-INF/web.xml">
-            <fileset dir="${web.build.dir}"/>
+    <!-- target dist: tạo file WAR -->
+    <target name="dist" depends="compile">
+        <mkdir dir="dist"/>
+        <war destfile="dist/${ant.project.name}.war"
+             webxml="Web Pages/WEB-INF/web.xml">
+            <fileset dir="Web Pages"/>
+            <classes dir="build/classes"/>
         </war>
-        <echo message="✅ WAR created at ${war.file}"/>
+        <echo message="WAR created at dist/${ant.project.name}.war"/>
     </target>
 </project>
