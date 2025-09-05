@@ -24,7 +24,7 @@
                classpathref="compile.classpath"/>
     </target>
 
-    <!-- target dist: tạo file WAR -->
+    <!-- target dist: tạo WAR -->
     <target name="dist" depends="compile">
         <mkdir dir="dist"/>
         <war destfile="dist/${ant.project.name}.war"
