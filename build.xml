@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ch09_ex2_cart" default="dist-war" basedir=".">
+    <description>
+        Custom build file for ch09_ex2_cart web application.
+    </description>
+
+    <!-- Định nghĩa thư mục -->
+    <property name="src.dir" value="src"/>
+    <property name="web.dir" value="web"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="web.build.dir" value="${build.dir}/web"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="${dist.dir}/${ant.project.name}.war"/>
+
+    <!-- Làm sạch build -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Biên dịch Java -->
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false"/>
+    </target>
+
+    <!-- Copy web resources (JSP, HTML, WEB-INF, …) -->
+    <target name="prepare-web">
+        <mkdir dir="${web.build.dir}"/>
+        <copy todir="${web.build.dir}">
+            <fileset dir="${web.dir}"/>
+        </copy>
+        <!-- Copy class vào WEB-INF/classes -->
+        <mkdir dir="${web.build.dir}/WEB-INF/classes"/>
+        <copy todir="${web.build.dir}/WEB-INF/classes">
+            <fileset dir="${classes.dir}"/>
+        </copy>
+    </target>
+
+    <!-- Đóng gói WAR -->
+    <target name="dist-war" depends="compile, prepare-web">
+        <mkdir dir="${dist.dir}"/>
+        <war destfile="${war.file}" webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${web.build.dir}"/>
+        </war>
+        <echo message="✅ WAR created at ${war.file}"/>
+    </target>
+</project>
